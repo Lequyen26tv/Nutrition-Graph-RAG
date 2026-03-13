@@ -1,0 +1,99 @@
+﻿food_id,food_name,category
+F001,Phở bò,Món nước
+F002,Phở gà,Món nước
+F003,Bún bò Huế,Món nước
+F004,Bún riêu,Món nước
+F005,Bún chả,Món nước
+F006,Bún thịt nướng,Món nước
+F007,Bún mắm,Món nước
+F008,Bún cá,Món nước
+F009,Bún mọc,Món nước
+F010,Bún thang,Món nước
+F011,Hủ tiếu Nam Vang,Món nước
+F012,Hủ tiếu gõ,Món nước
+F013,Mì Quảng,Món nước
+F014,Bánh canh cua,Món nước
+F015,Bánh canh giò heo,Món nước
+F016,Bánh canh cá lóc,Món nước
+F017,Bún sườn,Món nước
+F018,Bún gà,Món nước
+F019,Bún vịt,Món nước
+F020,Miến gà,Món nước
+F021,Cơm tấm,Món cơm
+F022,Cơm gà Hải Nam,Món cơm
+F023,Cơm gà xối mỡ,Món cơm
+F024,Cơm chiên dương châu,Món cơm
+F025,Cơm chiên hải sản,Món cơm
+F026,Cơm chiên cá mặn,Món cơm
+F027,Cơm sườn nướng,Món cơm
+F028,Cơm sườn bì chả,Món cơm
+F029,Cơm rang trứng,Món cơm
+F030,Cơm rang thập cẩm,Món cơm
+F031,Bánh mì thịt,Nhanh
+F033,Bánh mì trứng,Nhanh
+F034,Bánh mì pate,Nhanh
+F035,Bánh mì heo quay,Nhanh
+F036,Bánh mì xíu mại,Nhanh
+F037,Bánh mì bò,Nhanh
+F038,Bánh mì gà,Nhanh
+F039,Bánh mì cá,Nhanh
+F040,Bánh mì chả,Nhanh
+F041,Gỏi cuốn,Món cuốn
+F042,Chả giò,Món cuốn
+F043,Bánh xèo,Món chiên
+F044,Bánh khọt,Món chiên
+F045,Bánh bèo,Món hấp
+F046,Bánh nậm,Món hấp
+F047,Bánh bột lọc,Món hấp
+F048,Bánh ướt,Món hấp
+F049,Bánh cuốn,Món hấp
+F050,Bánh đúc,Món hấp
+F051,Canh chua cá,Món canh
+F052,Canh khổ qua nhồi thịt,Món canh
+F053,Canh bí đỏ,Món canh
+F054,Canh rau ngót,Món canh
+F055,Canh cải xanh,Món canh
+F056,Canh chua tôm,Món canh
+F057,Canh cua rau đay,Món canh
+F058,Canh cá lóc,Món canh
+F059,Canh bầu nấu tôm,Món canh
+F060,Canh rong biển,Món canh
+F061,Thịt kho tàu,Món mặn
+F062,Cá kho tộ,Món mặn
+F063,Cá kho riềng,Món mặn
+F064,Cá chiên,Món mặn
+F065,Gà kho gừng,Món mặn
+F066,Gà chiên nước mắm,Món mặn
+F067,Gà nướng,Món mặn
+F068,Sườn nướng,Món mặn
+F069,Thịt rang cháy cạnh,Món mặn
+F070,Thịt luộc,Món mặn
+F071,Rau muống xào tỏi,Món rau
+F072,Cải thìa xào,Món rau
+F073,Bắp cải xào,Món rau
+F074,Rau lang luộc,Món rau
+F075,Rau muống luộc,Món rau
+F076,Đậu hũ chiên,Món chay
+F077,Đậu hũ sốt cà chua,Món chay
+F078,Đậu hũ kho,Món chay
+F079,Chả đậu,Món chay
+F080,Canh đậu hũ,Món chay
+F081,Chè đậu xanh,Món tráng miệng
+F082,Chè đậu đen,Món tráng miệng
+F083,Chè ba màu,Món tráng miệng
+F084,Chè bắp,Món tráng miệng
+F085,Chè trôi nước,Món tráng miệng
+F086,Bánh flan,Món tráng miệng
+F088,Chuối chiên,Món tráng miệng
+F089,Bánh chuối,Món tráng miệng
+F090,Xôi gấc,Món xôi
+F091,Xôi đậu xanh,Món xôi
+F092,Xôi mặn,Món xôi
+F093,Xôi lá dứa,Món xôi
+F094,Xôi bắp,Món xôi
+F095,Xôi vò,Món xôi
+F096,Xôi đậu đen,Món xôi
+F097,Xôi đậu phộng,Món xôi
+F098,Xôi gà,Món xôi
+F099,Xôi thịt,Món xôi
+F100,Xôi chả,Món xôi
