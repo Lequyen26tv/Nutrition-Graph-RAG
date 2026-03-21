@@ -169,3 +169,4 @@ Hệ thống tập trung vào một số nhóm bệnh phổ biến:
 - Xây dựng hệ thống recommendation nâng cao
 
 ---
+-Link demo: https://drive.google.com/file/d/1qvNrLzjDs8JYbHuJAE9L4WYeaatcvS51/view?usp=sharing
