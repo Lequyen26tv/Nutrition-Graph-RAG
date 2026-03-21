@@ -1,11 +1,12 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import {
-    Carrot,
+    Sparkles,
     Search,
     Trash2,
-    Salad,
-    Activity,
     ShieldCheck,
+    AlertTriangle,
+    UtensilsCrossed,
+    HeartPulse,
 } from "lucide-react";
 
 import api from "../api/client";
@@ -21,47 +22,6 @@ function formatNumber(value) {
         return "-";
     }
     return Number(value).toFixed(2);
-}
-
-function buildChartItems(ingredient) {
-    return [
-        {
-            label: "Năng lượng",
-            key: "energy_kcal",
-            value: Number(ingredient?.energy_kcal || 0),
-            color: "bg-emerald-500",
-        },
-        {
-            label: "Protein",
-            key: "protein_g",
-            value: Number(ingredient?.protein_g || 0),
-            color: "bg-teal-500",
-        },
-        {
-            label: "Tinh bột",
-            key: "carb_g",
-            value: Number(ingredient?.carb_g || 0),
-            color: "bg-amber-400",
-        },
-        {
-            label: "Chất béo",
-            key: "fat_g",
-            value: Number(ingredient?.fat_g || 0),
-            color: "bg-orange-400",
-        },
-        {
-            label: "Natri",
-            key: "sodium_mg",
-            value: Number(ingredient?.sodium_mg || 0),
-            color: "bg-rose-400",
-        },
-        {
-            label: "Purin",
-            key: "purine_mg",
-            value: Number(ingredient?.purine_mg || 0),
-            color: "bg-fuchsia-400",
-        },
-    ];
 }
 
 function SummaryStat({ label, value, color = "emerald" }) {
@@ -99,190 +59,196 @@ function SectionCard({ icon: Icon, title, subtitle, children }) {
     );
 }
 
-function ConclusionBanner({ ingredient }) {
+function ConclusionBanner({ data }) {
     return (
         <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-5 text-emerald-800">
-            <div className="text-lg font-semibold">Đã tìm thấy nguyên liệu</div>
+            <div className="text-lg font-semibold">Đã tìm thấy món phù hợp hơn</div>
             <div className="text-sm mt-1">
-                Hệ thống đã tải thông tin dinh dưỡng hiện có của nguyên liệu{" "}
-                <strong>{ingredient?.name}</strong>.
+                Hệ thống đã so sánh món <strong>{data?.current_food}</strong> với các lựa chọn khác
+                để gợi ý món phù hợp hơn với bệnh lý hiện tại.
             </div>
         </div>
     );
 }
 
-function IngredientSummaryBlock({ ingredient }) {
-    if (!ingredient) return null;
+function ScoreBadge({ score, level }) {
+    return (
+        <div className="rounded-2xl bg-white border border-slate-200 px-4 py-3">
+            <div className="text-xs text-slate-500">Điểm phù hợp</div>
+            <div className="text-2xl font-bold text-slate-800">{score ?? "-"}</div>
+            <div className="text-sm text-slate-500">{level || "-"}</div>
+        </div>
+    );
+}
 
+function CurrentFoodBlock({ data }) {
     return (
         <SectionCard
-            icon={ShieldCheck}
-            title="Tóm tắt nhanh"
-            subtitle="Các chỉ số nổi bật của nguyên liệu trên 100g"
+            icon={UtensilsCrossed}
+            title="Món ăn hiện tại"
+            subtitle="Thông tin món ăn đang được dùng để so sánh"
         >
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div className="rounded-2xl bg-slate-50 p-4">
-                    <div className="text-sm text-slate-500">Năng lượng</div>
-                    <div className="text-xl font-bold text-slate-800 mt-1">
-                        {formatNumber(ingredient.energy_kcal)}
-                    </div>
-                </div>
-
-                <div className="rounded-2xl bg-slate-50 p-4">
-                    <div className="text-sm text-slate-500">Protein</div>
-                    <div className="text-xl font-bold text-slate-800 mt-1">
-                        {formatNumber(ingredient.protein_g)}
-                    </div>
-                </div>
-
-                <div className="rounded-2xl bg-slate-50 p-4">
-                    <div className="text-sm text-slate-500">Tinh bột</div>
-                    <div className="text-xl font-bold text-slate-800 mt-1">
-                        {formatNumber(ingredient.carb_g)}
-                    </div>
-                </div>
-
-                <div className="rounded-2xl bg-slate-50 p-4">
-                    <div className="text-sm text-slate-500">Chất béo</div>
-                    <div className="text-xl font-bold text-slate-800 mt-1">
-                        {formatNumber(ingredient.fat_g)}
-                    </div>
-                </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+                <div><strong>Tên món:</strong> {data.current_food}</div>
+                <div><strong>Điểm phù hợp:</strong> {data.current_food_health_score?.score}</div>
+                <div><strong>Mức đánh giá:</strong> {data.current_food_health_score?.level}</div>
             </div>
         </SectionCard>
     );
 }
 
-function IngredientChart({ ingredient }) {
-    const items = useMemo(() => buildChartItems(ingredient), [ingredient]);
-    const maxValue = Math.max(...items.map((i) => i.value), 1);
-
+function WarningPanel({ warnings = [] }) {
     return (
         <SectionCard
-            icon={Activity}
-            title="Biểu đồ dinh dưỡng chính"
-            subtitle="Biểu diễn trực quan các thành phần nổi bật của nguyên liệu"
+            icon={AlertTriangle}
+            title="Các điểm cần lưu ý"
+            subtitle="Những lý do khiến món ăn hiện tại chưa thật sự tối ưu"
         >
-            <div className="space-y-4">
-                {items.map((item) => {
-                    const percent = (item.value / maxValue) * 100;
-                    return (
-                        <div key={item.key}>
-                            <div className="flex items-center justify-between text-sm mb-1">
-                                <span className="font-medium text-slate-700">{item.label}</span>
-                                <span className="text-slate-500">{formatNumber(item.value)}</span>
-                            </div>
-                            <div className="h-3 bg-slate-200 rounded-full overflow-hidden">
-                                <div
-                                    className={`h-full ${item.color}`}
-                                    style={{ width: `${percent}%` }}
-                                />
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
+            {!warnings.length ? (
+                <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-700">
+                    Không có cảnh báo đáng chú ý.
+                </div>
+            ) : (
+                <ul className="space-y-3">
+                    {warnings.map((warning, index) => (
+                        <li
+                            key={index}
+                            className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-800"
+                        >
+                            {warning}
+                        </li>
+                    ))}
+                </ul>
+            )}
         </SectionCard>
     );
 }
 
-export default function IngredientLookupPage() {
-    const { ingredients, loadingMasterData } = useMasterData();
+export default function RecommendationPage() {
+    const { foods, diseases, loadingMasterData } = useMasterData();
 
-    const [ingredientName, setIngredientName] = useState("");
+    const [foodName, setFoodName] = useState("");
+    const [diseaseName, setDiseaseName] = useState("");
+    const [limit, setLimit] = useState(5);
     const [data, setData] = useState(null);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const handleLookup = async () => {
+    const handleRecommend = async () => {
         setLoading(true);
         setError("");
         setData(null);
 
         try {
-            const res = await api.get(
-                `/ingredient-nutrition/${encodeURIComponent(ingredientName)}`
-            );
+            const res = await api.post("/recommend-food", {
+                food_name: foodName,
+                disease_name: diseaseName,
+                limit: Number(limit),
+            });
             setData(res.data);
         } catch (err) {
-            setError(err?.response?.data?.detail || "Không tra cứu được nguyên liệu.");
+            setError(err?.response?.data?.detail || "Không gợi ý được món phù hợp.");
         } finally {
             setLoading(false);
         }
     };
 
     const clearForm = () => {
-        setIngredientName("");
+        setFoodName("");
+        setDiseaseName("");
+        setLimit(5);
         setData(null);
         setError("");
     };
 
-    const ingredient = data?.ingredient;
-
     return (
         <div className="space-y-6">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                <SummaryStat
-                    label="Nguyên liệu hiện có"
-                    value={ingredients.length}
-                    color="emerald"
-                />
-                <SummaryStat
-                    label="Chế độ"
-                    value="Xem dinh dưỡng nguyên liệu"
-                    color="blue"
-                />
-                <SummaryStat
-                    label="Dữ liệu nhập"
-                    value={ingredientName ? 1 : 0}
-                    color="amber"
-                />
+                <SummaryStat label="Món ăn hiện có" value={foods.length} color="emerald" />
+                <SummaryStat label="Bệnh hỗ trợ" value={diseases.length} color="blue" />
+                <SummaryStat label="Số gợi ý" value={limit} color="amber" />
                 <SummaryStat
                     label="Trạng thái"
-                    value={ingredient ? "Đã tìm thấy" : "Chờ nhập"}
+                    value={data ? "Đã gợi ý" : "Chờ nhập"}
                     color="teal"
                 />
             </div>
 
             <SectionCard
-                icon={Carrot}
-                title="Xem dinh dưỡng nguyên liệu"
-                subtitle="Chọn nguyên liệu để xem thông tin dinh dưỡng hiện có trong dữ liệu"
+                icon={Sparkles}
+                title="Gợi ý món phù hợp hơn"
+                subtitle="So sánh món ăn hiện tại với các lựa chọn khác để tìm món phù hợp hơn với bệnh lý"
             >
                 <div className="space-y-5">
-                    <AutocompleteInput
-                        label="Nguyên liệu"
-                        value={ingredientName}
-                        onChange={setIngredientName}
-                        options={ingredients}
-                        placeholder="Nhập hoặc chọn nguyên liệu"
-                        listId="ingredient-lookup-list"
-                    />
+                    <div className="grid lg:grid-cols-[1fr_1fr_140px] gap-4">
+                        <AutocompleteInput
+                            label="Món ăn hiện tại"
+                            value={foodName}
+                            onChange={setFoodName}
+                            options={foods}
+                            placeholder="Nhập hoặc chọn món ăn"
+                            listId="recommend-food-list"
+                        />
 
-                    <DataHint
-                        value={ingredientName}
-                        options={ingredients}
-                        label="Nguyên liệu"
-                    />
+                        <div className="space-y-2">
+                            <label className="block text-sm font-semibold text-slate-700">
+                                Bệnh lý
+                            </label>
+                            <select
+                                className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500"
+                                value={diseaseName}
+                                onChange={(e) => setDiseaseName(e.target.value)}
+                            >
+                                <option value="">Chọn bệnh</option>
+                                {diseases.map((d) => (
+                                    <option key={d.id} value={d.name}>
+                                        {d.id} - {d.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="block text-sm font-semibold text-slate-700">
+                                Số lượng
+                            </label>
+                            <input
+                                type="number"
+                                min="1"
+                                max="10"
+                                className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500"
+                                value={limit}
+                                onChange={(e) => setLimit(e.target.value)}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="grid lg:grid-cols-2 gap-4">
+                        <DataHint value={foodName} options={foods} label="Món ăn" />
+                        <DataHint value={diseaseName} options={diseases} label="Bệnh" />
+                    </div>
 
                     <QuickExamples
                         title="Ví dụ gợi ý nhanh"
                         items={[
-                            "Khoai tây lát chiên",
-                            "Thịt bò",
-                            "Rau muống",
-                            "Cà chua",
+                            "Phở bò + Tăng huyết áp",
+                            "Phở bò + Bệnh gút đơn thuần",
+                            "Phở bò + Rối loạn lipid máu",
                         ]}
-                        onPick={setIngredientName}
+                        onPick={(value) => {
+                            const [food, disease] = value.split(" + ");
+                            setFoodName(food);
+                            setDiseaseName(disease);
+                        }}
                     />
 
                     <div className="flex flex-wrap gap-3">
                         <button
-                            onClick={handleLookup}
+                            onClick={handleRecommend}
                             className="px-5 py-3 rounded-2xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 flex items-center gap-2"
                         >
                             <Search size={18} />
-                            Tra cứu
+                            Gợi ý món
                         </button>
 
                         <button
@@ -296,7 +262,7 @@ export default function IngredientLookupPage() {
 
                     {loadingMasterData && (
                         <p className="text-sm text-slate-500">
-                            Đang tải danh sách nguyên liệu...
+                            Đang tải dữ liệu món ăn và bệnh lý...
                         </p>
                     )}
                 </div>
@@ -305,42 +271,64 @@ export default function IngredientLookupPage() {
             {loading && <LoadingSpinner />}
             {error && <div className="text-rose-600 font-medium">{error}</div>}
 
-            {!loading && !error && !ingredient && (
-                <EmptyState message="Chọn nguyên liệu để bắt đầu tra cứu." />
+            {!loading && !error && !data && (
+                <EmptyState message="Chọn món ăn và bệnh lý để nhận gợi ý phù hợp hơn." />
             )}
 
-            {ingredient && (
+            {data && (
                 <div className="space-y-6">
-                    <ConclusionBanner ingredient={ingredient} />
+                    <ConclusionBanner data={data} />
 
-                    <IngredientSummaryBlock ingredient={ingredient} />
+                    <CurrentFoodBlock data={data} />
 
-                    <IngredientChart ingredient={ingredient} />
+                    <WarningPanel warnings={data.current_food_warnings || []} />
 
                     <SectionCard
-                        icon={Salad}
-                        title="Thành phần dinh dưỡng"
-                        subtitle="Thông tin hiện có của nguyên liệu theo 100g"
+                        icon={HeartPulse}
+                        title="Danh sách món phù hợp hơn"
+                        subtitle="Các món được sắp xếp theo mức độ phù hợp tốt hơn trong dữ liệu hiện có"
                     >
-                        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-                            <div><strong>ID:</strong> {ingredient.id}</div>
-                            <div><strong>Tên:</strong> {ingredient.name}</div>
-                            <div><strong>Nhóm:</strong> {ingredient.category || "-"}</div>
+                        <div className="grid md:grid-cols-2 gap-4">
+                            {data.recommendations?.map((item, idx) => (
+                                <div
+                                    key={idx}
+                                    className="rounded-2xl border border-slate-200 p-4 bg-slate-50 space-y-3"
+                                >
+                                    <div className="flex items-start justify-between gap-3">
+                                        <div>
+                                            <div className="font-semibold text-slate-800">{item.food}</div>
+                                            <div className="text-sm text-slate-500 mt-1">
+                                                Chỉ số cao: {item.high_violations} · Chỉ số thấp: {item.low_violations}
+                                            </div>
+                                        </div>
 
-                            <div>Năng lượng: {formatNumber(ingredient.energy_kcal)}</div>
-                            <div>Protein: {formatNumber(ingredient.protein_g)}</div>
-                            <div>Tinh bột: {formatNumber(ingredient.carb_g)}</div>
-                            <div>Chất béo: {formatNumber(ingredient.fat_g)}</div>
-                            <div>Chất xơ: {formatNumber(ingredient.fiber_g)}</div>
-                            <div>Purin: {formatNumber(ingredient.purine_mg)}</div>
-                            <div>Natri: {formatNumber(ingredient.sodium_mg)}</div>
-                            <div>Kali: {formatNumber(ingredient.potassium_mg)}</div>
-                            <div>Cholesterol: {formatNumber(ingredient.cholesterol_mg)}</div>
-                            <div>Phospho: {formatNumber(ingredient.phosphorus_mg)}</div>
-                            <div>Canxi: {formatNumber(ingredient.calcium_mg)}</div>
-                            <div>Sắt: {formatNumber(ingredient.iron_mg)}</div>
-                            <div>Vitamin C: {formatNumber(ingredient.vitamin_c_mg)}</div>
-                            <div>Nước: {formatNumber(ingredient.water_g)}</div>
+                                        <ScoreBadge
+                                            score={item.health_score?.score}
+                                            level={item.health_score?.level}
+                                        />
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-3 text-sm text-slate-700">
+                                        <div>Năng lượng: {formatNumber(item.nutrition?.energy_kcal)}</div>
+                                        <div>Protein: {formatNumber(item.nutrition?.protein_g)}</div>
+                                        <div>Tinh bột: {formatNumber(item.nutrition?.carb_g)}</div>
+                                        <div>Chất béo: {formatNumber(item.nutrition?.fat_g)}</div>
+                                    </div>
+
+                                    {item.warnings?.length > 0 && (
+                                        <div className="space-y-2">
+                                            {item.warnings.slice(0, 3).map((warning, wIdx) => (
+                                                <div
+                                                    key={wIdx}
+                                                    className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800"
+                                                >
+                                                    {warning}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
                         </div>
                     </SectionCard>
                 </div>

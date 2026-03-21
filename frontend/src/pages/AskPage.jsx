@@ -277,7 +277,6 @@ export default function AskPage() {
                         title="Ví dụ gợi ý nhanh"
                         items={[
                             "Người tăng huyết áp có nên ăn phở bò không?",
-                            "Bệnh gút đơn thuần ăn phở bò được không?",
                             "Cho tôi biết dinh dưỡng của phở bò",
                             "Người rối loạn lipid máu có nên ăn phở bò không?"
                         ]}
