@@ -170,3 +170,7 @@ Hệ thống tập trung vào một số nhóm bệnh phổ biến:
 
 ---
 -Link demo: https://drive.google.com/file/d/1qvNrLzjDs8JYbHuJAE9L4WYeaatcvS51/view?usp=sharing
+- Link web: http://103.82.26.217/
+- Connect URL / Database: neo4j://103.82.26.217:7687
+- Username: neo4j
+- Password: dinhduong123
